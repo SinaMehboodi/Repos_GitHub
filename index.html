@@ -39,12 +39,35 @@
         .class-name {
             font-weight: bold;
             font-size: 1.2em;
+            cursor: pointer;
         }
 
         .functions-list {
             margin-top: 10px;
             padding-left: 20px;
+            list-style-type: none; /* Removes bullet points */
+            display: none; /* Initially hide details */
         }
+
+        .functions-list.active {
+            display: block; /* Show details when active */
+        }
+
+        .functions-list li {
+            margin: 5px 0;
+        }
+
+        .function-info {
+            display: none; /* Initially hide function info */
+            margin-left: 20px;
+            color: #555;
+            font-style: italic;
+        }
+
+        .function-info.active {
+            display: block; /* Show info when active */
+        }
+
     </style>
 </head>
 <body>
@@ -52,38 +75,114 @@
     <h1>Library for Data Analysis</h1>
 
     <div class="class-box spectrum">
-        <div class="class-name">Spectrum</div>
+        <div class="class-name" onclick="toggleDetails(this)">Spectrum</div>
         <ul class="functions-list">
-            <li>get()</li>
-            <li>plot()</li>
-            <li>zoom_plot()</li>
-            <li>zoom_cycle_plot()</li>
-            <li>scatter_plot()</li>
-            <li>data_loader()</li>
-            <li>denoise_spectrum()</li>
+            <li onclick="toggleInfo(this)">get()
+                <div class="function-info">
+                    This function retrieves the spectrum data from the source.
+                </div>
+            </li>
+            <li onclick="toggleInfo(this)">plot()
+                <div class="function-info">
+                    This function plots the spectrum data.
+                </div>
+            </li>
+            <li onclick="toggleInfo(this)">zoom_plot()
+                <div class="function-info">
+                    This function allows you to zoom into a specific region of the plot.
+                </div>
+            </li>
+            <li onclick="toggleInfo(this)">zoom_cycle_plot()
+                <div class="function-info">
+                    This function cycles through different zoom levels in the plot.
+                </div>
+            </li>
+            <li onclick="toggleInfo(this)">scatter_plot()
+                <div class="function-info">
+                    This function generates a scatter plot of the spectrum data.
+                </div>
+            </li>
+            <li onclick="toggleInfo(this)">data_loader()
+                <div class="function-info">
+                    This function loads the spectrum data from external sources.
+                </div>
+            </li>
+            <li onclick="toggleInfo(this)">denoise_spectrum()
+                <div class="function-info">
+                    This function removes noise from the spectrum data.
+                </div>
+            </li>
         </ul>
     </div>
 
     <div class="class-box linecut">
-        <div class="class-name">Linecut</div>
+        <div class="class-name" onclick="toggleDetails(this)">Linecut</div>
         <ul class="functions-list">
-            <li>get_cut()</li>
-            <li>plot()</li>
-            <li>denoising()</li>
-            <li>one_peak()</li>
-            <li>two_peak()</li>
-            <li>three_peak()</li>
-            <li>fit()</li>
+            <li onclick="toggleInfo(this)">get_cut()
+                <div class="function-info">
+                    This function retrieves a line cut from the dataset.
+                </div>
+            </li>
+            <li onclick="toggleInfo(this)">plot()
+                <div class="function-info">
+                    This function plots the line cut data.
+                </div>
+            </li>
+            <li onclick="toggleInfo(this)">denoising()
+                <div class="function-info">
+                    This function applies denoising techniques to the line cut.
+                </div>
+            </li>
+            <li onclick="toggleInfo(this)">one_peak()
+                <div class="function-info">
+                    This function fits a single peak to the line cut data.
+                </div>
+            </li>
+            <li onclick="toggleInfo(this)">two_peak()
+                <div class="function-info">
+                    This function fits two peaks to the line cut data.
+                </div>
+            </li>
+            <li onclick="toggleInfo(this)">three_peak()
+                <div class="function-info">
+                    This function fits three peaks to the line cut data.
+                </div>
+            </li>
+            <li onclick="toggleInfo(this)">fit()
+                <div class="function-info">
+                    This function performs a fit to the line cut data using a predefined model.
+                </div>
+            </li>
         </ul>
     </div>
 
     <div class="class-box cpw">
-        <div class="class-name">CPW</div>
+        <div class="class-name" onclick="toggleDetails(this)">CPW</div>
         <ul class="functions-list">
-            <li>Function A</li>
-            <li>Function B</li>
+            <li onclick="toggleInfo(this)">Function A
+                <div class="function-info">
+                    Information about Function A.
+                </div>
+            </li>
+            <li onclick="toggleInfo(this)">Function B
+                <div class="function-info">
+                    Information about Function B.
+                </div>
+            </li>
         </ul>
     </div>
+
+    <script>
+        function toggleDetails(element) {
+            let list = element.nextElementSibling;
+            list.classList.toggle('active');
+        }
+
+        function toggleInfo(element) {
+            let info = element.querySelector('.function-info');
+            info.classList.toggle('active');
+        }
+    </script>
 
 </body>
 </html>
