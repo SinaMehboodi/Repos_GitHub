@@ -14,17 +14,22 @@
             align-items: flex-start;
         }
 
+        .container {
+            display: flex;
+            width: 100%;
+        }
+
         .left-section {
-            width: 55%;
+            width: 50%;
         }
 
         .right-section {
-            width: 40%;
+            width: 50%;
             padding: 15px;
             border: 1px solid #ccc;
             border-radius: 8px;
             background-color: #fff;
-            margin-left: 20px;
+            margin-top: 23px;
         }
 
         h1 {
@@ -83,47 +88,49 @@
 </head>
 <body>
 
-    <div class="left-section">
-        <h1>Library for Data Analysis</h1>
+    <div class="container">
+        <div class="left-section">
+            <h1>Library for Data Analysis</h1>
 
-        <div class="class-box spectrum">
-            <div class="class-name" onclick="toggleDetails(this)">Spectrum</div>
-            <ul class="functions-list">
-                <li onclick="showInfo('Spectrum', 'get()')">get()</li>
-                <li onclick="showInfo('Spectrum', 'plot()')">plot()</li>
-                <li onclick="showInfo('Spectrum', 'zoom_plot()')">zoom_plot()</li>
-                <li onclick="showInfo('Spectrum', 'zoom_cycle_plot()')">zoom_cycle_plot()</li>
-                <li onclick="showInfo('Spectrum', 'scatter_plot()')">scatter_plot()</li>
-                <li onclick="showInfo('Spectrum', 'data_loader()')">data_loader()</li>
-                <li onclick="showInfo('Spectrum', 'denoise_spectrum()')">denoise_spectrum()</li>
-            </ul>
+            <div class="class-box spectrum">
+                <div class="class-name" onclick="toggleDetails(this)">Spectrum</div>
+                <ul class="functions-list">
+                    <li onclick="showInfo('Spectrum', 'get()')">get()</li>
+                    <li onclick="showInfo('Spectrum', 'plot()')">plot()</li>
+                    <li onclick="showInfo('Spectrum', 'zoom_plot()')">zoom_plot()</li>
+                    <li onclick="showInfo('Spectrum', 'zoom_cycle_plot()')">zoom_cycle_plot()</li>
+                    <li onclick="showInfo('Spectrum', 'scatter_plot()')">scatter_plot()</li>
+                    <li onclick="showInfo('Spectrum', 'data_loader()')">data_loader()</li>
+                    <li onclick="showInfo('Spectrum', 'denoise_spectrum()')">denoise_spectrum()</li>
+                </ul>
+            </div>
+
+            <div class="class-box linecut">
+                <div class="class-name" onclick="toggleDetails(this)">Linecut</div>
+                <ul class="functions-list">
+                    <li onclick="showInfo('Linecut', 'get_cut()')">get_cut()</li>
+                    <li onclick="showInfo('Linecut', 'plot()')">plot()</li>
+                    <li onclick="showInfo('Linecut', 'denoising()')">denoising()</li>
+                    <li onclick="showInfo('Linecut', 'one_peak()')">one_peak()</li>
+                    <li onclick="showInfo('Linecut', 'two_peak()')">two_peak()</li>
+                    <li onclick="showInfo('Linecut', 'three_peak()')">three_peak()</li>
+                    <li onclick="showInfo('Linecut', 'fit()')">fit()</li>
+                </ul>
+            </div>
+
+            <div class="class-box cpw">
+                <div class="class-name" onclick="toggleDetails(this)">CPW</div>
+                <ul class="functions-list">
+                    <li onclick="showInfo('CPW', 'Function A')">Function A</li>
+                    <li onclick="showInfo('CPW', 'Function B')">Function B</li>
+                </ul>
+            </div>
         </div>
 
-        <div class="class-box linecut">
-            <div class="class-name" onclick="toggleDetails(this)">Linecut</div>
-            <ul class="functions-list">
-                <li onclick="showInfo('Linecut', 'get_cut()')">get_cut()</li>
-                <li onclick="showInfo('Linecut', 'plot()')">plot()</li>
-                <li onclick="showInfo('Linecut', 'denoising()')">denoising()</li>
-                <li onclick="showInfo('Linecut', 'one_peak()')">one_peak()</li>
-                <li onclick="showInfo('Linecut', 'two_peak()')">two_peak()</li>
-                <li onclick="showInfo('Linecut', 'three_peak()')">three_peak()</li>
-                <li onclick="showInfo('Linecut', 'fit()')">fit()</li>
-            </ul>
-        </div>
-
-        <div class="class-box cpw">
-            <div class="class-name" onclick="toggleDetails(this)">CPW</div>
-            <ul class="functions-list">
-                <li onclick="showInfo('CPW', 'Function A')">Function A</li>
-                <li onclick="showInfo('CPW', 'Function B')">Function B</li>
-            </ul>
-        </div>
-    </div>
-
-    <div class="right-section">
-        <div id="info-box" class="info-box">
-            <p>Select a function to see details.</p>
+        <div class="right-section">
+            <div id="info-box" class="info-box">
+                <p>Select a function to see details.</p>
+            </div>
         </div>
     </div>
 
