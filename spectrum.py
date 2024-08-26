@@ -39,7 +39,7 @@ def derivative_divide(
             "hint": "Average results of function with modulation_amp=range(0,modulation_amp+1).",
             }=True
         ):
-        """
+        """  
         Perform numerical derivative along the axis given by the axis argument and
         divide by the non-derivative value.
 
