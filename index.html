@@ -10,26 +10,26 @@
             margin: 20px;
             background-color: #f9f9f9;
             display: flex;
-            justify-content: space-between;
-        }
-
-        h1 {
-            color: orange;
-            text-align: center;
-            width: 100%;
+            justify-content: flex-start;
+            align-items: flex-start;
         }
 
         .left-section {
-            width: 100%;
+            width: 55%;
         }
 
         .right-section {
-            width: 100%;
+            width: 40%;
             padding: 15px;
             border: 1px solid #ccc;
             border-radius: 8px;
             background-color: #fff;
-            height: auto;
+            margin-left: 20px;
+        }
+
+        h1 {
+            color: orange;
+            text-align: left;
         }
 
         .class-box {
@@ -74,13 +74,6 @@
             cursor: pointer; /* Pointer cursor on hover */
         }
 
-        .function-info {
-            margin-left: 20px;
-            color: #555;
-            font-style: italic;
-            display: none; /* Hide inline details */
-        }
-
         .info-box {
             font-size: 1em;
             color: #333;
@@ -90,9 +83,9 @@
 </head>
 <body>
 
-    <h1>Library for Data Analysis</h1>
-
     <div class="left-section">
+        <h1>Library for Data Analysis</h1>
+
         <div class="class-box spectrum">
             <div class="class-name" onclick="toggleDetails(this)">Spectrum</div>
             <ul class="functions-list">
@@ -192,4 +185,3 @@
 
 </body>
 </html>
-
