@@ -1,7 +1,7 @@
 import numpy as np
 import matplotlib.pyplot as plt
 from pandas import DataFrame, to_numeric, read_csv
-from scipy.fft import fft, fft2, fftfreq, ifft, ifft2
+from scipy.fft import fft, fft2, fftfreq, ifft, ifft2 
 from matplotlib import ticker
 from scipy.io import loadmat
 from os import listdir
@@ -27,17 +27,17 @@ def derivative_divide(
         axis:{
             "type": "int",
             "min":0, "max": 1,
-            "hint": "Axis along which the difference quotient is calculated."
-            }=0,
+            "hint": "Axis along which the difference quotient is calculated."# type: ignore
+            }=0,# type: ignore
         modulation_amp:{
             "type": "int",
             "min": 0,
-            "hint": "Perform difference quotient with this step width."
-            }=1,
+            "hint": "Perform difference quotient with this step width."# type: ignore
+            }=1,# type: ignore
         average:{
             "type": "bool",
-            "hint": "Average results of function with modulation_amp=range(0,modulation_amp+1).",
-            }=True
+            "hint": "Average results of function with modulation_amp=range(0,modulation_amp+1).",# type: ignore
+            }=True# type: ignore
         ):
         """  
         Perform numerical derivative along the axis given by the axis argument and
@@ -118,13 +118,13 @@ def derivative(
         axis:{
             "type": "int",
             "min":0, "max": 1,
-            "hint": "Axis along which the difference quotient is calculated."
-            }=0,
+            "hint": "Axis along which the difference quotient is calculated." # type: ignore
+            }=0, # type: ignore
         modulation_amp:{
             "type": "int",
             "min": 0,
-            "hint": "Perform difference quotient with this step width."
-            }=1
+            "hint": "Perform difference quotient with this step width." # type: ignore
+            }=1 # type: ignore
         ):
     if axis == 0:
         delta = np.diff(X, axis=axis)
@@ -501,7 +501,7 @@ class Spectrum:
             plt.savefig(save_name, bbox_inches='tight',dpi=900)
 
     @timeit
-    def zoom_plot(self, freq_range, scan_range, save_name=None, denoise = False, v_min=-0.001, v_max=0.001,c_map="PuOr",pic_size= 480,style="Beam",unit=100,nom_locator=5):
+    def zoom_plot(self, freq_range, scan_range, clipping=False,save_name=None, denoise = False, v_min=-0.001, v_max=0.001,c_map="PuOr",pic_size= 480,style="Beam",unit=100,nom_locator=5):
         """
         Plots a square cut of the spectrum as defined by freq_range and scan_range.
 
@@ -534,6 +534,7 @@ class Spectrum:
         
         ax1.plot(self.Field[scan_min:scan_max,0], self.B[scan_min:scan_max], c="blue")
         ######
+        
         if denoise:
             
             S21dd = np.real(self.denoise_spectrum())
@@ -545,8 +546,14 @@ class Spectrum:
 
         else:
         
-            im = ax.pcolor(self.Field[scan_min:scan_max, f_min:f_max], self.Freq[f_min:f_max, scan_min:scan_max].T, self.S21dd[scan_min:scan_max, f_min:f_max],
-                vmin=v_min, vmax=v_max, cmap=c_map,shading='auto')
+            if clipping:
+                S21dd=np.clip(self.S21dd,v_min,v_max)
+                im = ax.pcolor(self.Field[scan_min:scan_max, f_min:f_max], self.Freq[f_min:f_max, scan_min:scan_max].T, S21dd[scan_min:scan_max, f_min:f_max],
+                    vmin=v_min, vmax=v_max, cmap=c_map,shading='auto')
+            else:
+                
+                im = ax.pcolor(self.Field[scan_min:scan_max, f_min:f_max], self.Freq[f_min:f_max, scan_min:scan_max].T, self.S21dd[scan_min:scan_max, f_min:f_max],
+                    vmin=v_min, vmax=v_max, cmap=c_map,shading='auto')
         ######
         cb_ax = fig.add_axes([1.01, 0.135, 0.02, 0.6])
         cbar = fig.colorbar(im, cax=cb_ax,ticks=[v_min,0,v_max])
