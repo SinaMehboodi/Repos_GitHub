@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Library for Data Analysis</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            background-color: #f9f9f9;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+        }
+
+        .left-section {
+            width: 50%;
+        }
+
+        .right-section {
+            width: 50%;
+            padding: 15px;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            background-color: #fff;
+            margin-left: 20px;
+            margin-top: 80px;
+        }
+
+        h1 {
+            color: orange;
+            text-align: center;
+        }
+
+        .class-box {
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            padding: 15px;
+            margin: 15px 0;
+        }
+
+        .spectrum {
+            background-color: #ffebcd; /* BlanchedAlmond */
+        }
+
+        .linecut {
+            background-color: #e0ffff; /* LightCyan */
+        }
+
+        .cpw {
+            background-color: #f0e68c; /* Khaki */
+        }
+
+        .class-name {
+            font-weight: bold;
+            font-size: 1.2em;
+            cursor: pointer;
+        }
+
+        .functions-list {
+            margin-top: 10px;
+            padding-left: 20px;
+            list-style-type: none; /* Removes bullet points */
+            display: none; /* Initially hide details */
+        }
+
+        .functions-list.active {
+            display: block; /* Show details when active */
+        }
+
+        .functions-list li {
+            margin: 15px 0; /* Increase space between functions */
+            font-weight: bold; /* Make function names bold */
+            cursor: pointer; /* Pointer cursor on hover */
+        }
+
+        .info-box {
+            font-size: 1em;
+            color: #333;
+        }
+
+    </style>
+</head>
+<body>
+
+    <div class="left-section">
+        <h1>Library for Data Analysis</h1>
+
+        <div class="class-box spectrum">
+            <div class="class-name" onclick="toggleDetails(this)">Spectrum</div>
+            <ul class="functions-list">
+                <li onclick="showInfo('Spectrum', 'get()')">get()</li>
+                <li onclick="showInfo('Spectrum', 'plot()')">plot()</li>
+                <li onclick="showInfo('Spectrum', 'zoom_plot()')">zoom_plot()</li>
+                <li onclick="showInfo('Spectrum', 'zoom_cycle_plot()')">zoom_cycle_plot()</li>
+                <li onclick="showInfo('Spectrum', 'scatter_plot()')">scatter_plot()</li>
+                <li onclick="showInfo('Spectrum', 'data_loader()')">data_loader()</li>
+                <li onclick="showInfo('Spectrum', 'denoise_spectrum()')">denoise_spectrum()</li>
+            </ul>
+        </div>
+
+        <div class="class-box linecut">
+            <div class="class-name" onclick="toggleDetails(this)">Linecut</div>
+            <ul class="functions-list">
+                <li onclick="showInfo('Linecut', 'get_cut()')">get_cut()</li>
+                <li onclick="showInfo('Linecut', 'plot()')">plot()</li>
+                <li onclick="showInfo('Linecut', 'denoising()')">denoising()</li>
+                <li onclick="showInfo('Linecut', 'one_peak()')">one_peak()</li>
+                <li onclick="showInfo('Linecut', 'two_peak()')">two_peak()</li>
+                <li onclick="showInfo('Linecut', 'three_peak()')">three_peak()</li>
+                <li onclick="showInfo('Linecut', 'fit()')">fit()</li>
+            </ul>
+        </div>
+
+        <div class="class-box cpw">
+            <div class="class-name" onclick="toggleDetails(this)">CPW</div>
+            <ul class="functions-list">
+                <li onclick="showInfo('CPW', 'Function A')">Function A</li>
+                <li onclick="showInfo('CPW', 'Function B')">Function B</li>
+            </ul>
+        </div>
+    </div>
+
+    <div class="right-section">
+        <div id="info-box" class="info-box">
+            <p>Select a function to see details.</p>
+        </div>
+    </div>
+
+    <script>
+        function toggleDetails(element) {
+            let list = element.nextElementSibling;
+            list.classList.toggle('active');
+        }
+
+        function showInfo(className, functionName) {
+            const infoBox = document.getElementById('info-box');
+            let infoText = '';
+
+            // Set information based on the function name
+            if (className === 'Spectrum') {
+                if (functionName === 'get()') {
+                    infoText = 'This function retrieves the spectrum data from the source.';
+                } else if (functionName === 'plot()') {
+                    infoText = 'This function plots the spectrum data.';
+                } else if (functionName === 'zoom_plot()') {
+                    infoText = 'This function allows you to zoom into a specific region of the plot.';
+                } else if (functionName === 'zoom_cycle_plot()') {
+                    infoText = 'This function cycles through different zoom levels in the plot.';
+                } else if (functionName === 'scatter_plot()') {
+                    infoText = 'This function generates a scatter plot of the spectrum data.';
+                } else if (functionName === 'data_loader()') {
+                    infoText = 'This function loads the spectrum data from external sources.';
+                } else if (functionName === 'denoise_spectrum()') {
+                    infoText = 'This function removes noise from the spectrum data.';
+                }
+            } else if (className === 'Linecut') {
+                if (functionName === 'get_cut()') {
+                    infoText = 'This function retrieves a line cut from the dataset.';
+                } else if (functionName === 'plot()') {
+                    infoText = 'This function plots the line cut data.';
+                } else if (functionName === 'denoising()') {
+                    infoText = 'This function applies denoising techniques to the line cut.';
+                } else if (functionName === 'one_peak()') {
+                    infoText = 'This function fits a single peak to the line cut data.';
+                } else if (functionName === 'two_peak()') {
+                    infoText = 'This function fits two peaks to the line cut data.';
+                } else if (functionName === 'three_peak()') {
+                    infoText = 'This function fits three peaks to the line cut data.';
+                } else if (functionName === 'fit()') {
+                    infoText = 'This function performs a fit to the line cut data using a predefined model.';
+                }
+            } else if (className === 'CPW') {
+                if (functionName === 'Function A') {
+                    infoText = 'Information about Function A.';
+                } else if (functionName === 'Function B') {
+                    infoText = 'Information about Function B.';
+                }
+            }
+
+            // Display the information in the right section
+            infoBox.innerHTML = `<h3>${className} - ${functionName}</h3><p>${infoText}</p>`;
+        }
+    </script>
+
+</body>
+</html>
