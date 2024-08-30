@@ -216,6 +216,50 @@ def set_size(width, fraction=1):
 
     return fig_dim
 
+############################################################################
+
+############################################## field distribution ####################################################
+# all analytical expressions are from WolframAlpha
+def indefinite_integral_x(x,x0,z,z0,direction = 'ip'):
+    # factor 2 of integrand is included
+    if direction == 'ip':
+        result = -((x-x0)*np.log((x-x0)**2+(z-z0)**2) + 2*z*np.arctan((x-x0)/(z-z0)) + 2*z0*np.arctan((z-z0)/(x-x0)))
+    elif direction == 'oop':
+        result = (z-z0)*np.log((x-x0)**2+(z-z0)**2) + 2*(x-x0)*np.arctan((z-z0)/(x-x0))
+    return result
+
+def integrand(x_upper_boundary,x_lower_boundary,x0,z,z0,direction = 'ip'):
+    return indefinite_integral_x(x_upper_boundary,x0,z,z0,direction=direction)-indefinite_integral_x(x_lower_boundary,x0,z,z0,direction=direction)
+
+def B_BS_analytic(x0,z0,thickness,width,I=4.5e-3,direction = 'ip'):
+    # factor 2 of integrand is included
+    x_lower_boundary = -width/2
+    x_upper_boundary = width/2
+    z_lower_boundary = -thickness/2
+    z_upper_boundary = thickness/2
+    pi = np.pi
+    mu0 = 4*pi*1e-7
+    J = I/(width*thickness)
+    
+    field = integrand(x_upper_boundary, x_lower_boundary, x0, z_upper_boundary, z0, direction=direction) - integrand(x_upper_boundary, x_lower_boundary, x0, z_lower_boundary, z0, direction=direction)
+    
+    return mu0/(4*pi)*J*field
+#####################################################################################
+def FFT_1D(array, dx, zero_pad=None):
+    if zero_pad:
+        spectrum = np.fft.fftshift(np.fft.fft(array,n=zero_pad))
+    else:
+        spectrum = np.fft.fftshift(np.fft.fft(array))
+    spectrumAbs = np.abs(spectrum)
+    stepx = dx*1e-6
+    pi=np.pi
+    k = np.fft.fftshift(np.fft.fftfreq(len(spectrumAbs),stepx))*2*pi
+    dk = np.abs(k[0]-k[1])
+    
+    return spectrum, k, dk
+############################################################################
+############################################################################
+
 class Spectrum:
     
     def __init__(self, path, saturation=None, skip_field=1, skip_freq=1, derivative_divide=True , derivative=False,warning=True,modulation_amp=1):
