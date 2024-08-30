@@ -238,7 +238,7 @@ class Spectrum:
         self.saturation = saturation
 
         if self.saturation == None:
-            
+        
             if warning:
 
                 print("The scan no. where the kittel mode ends was not chosen. All fits called from this object will treat Msat as a free parameter. This might decrease fitting accuracy.\
@@ -501,7 +501,7 @@ class Spectrum:
             plt.savefig(save_name, bbox_inches='tight',dpi=900)
 
     @timeit
-    def zoom_plot(self, freq_range, scan_range, clipping=False,save_name=None, denoise = False, v_min=-0.001, v_max=0.001,c_map="PuOr",pic_size= 480,style="Beam",unit=100,nom_locator=5):
+    def zoom_plot(self, freq_range, scan_range, clip_range=[-10,10], clipping=False,save_name=None, denoise = False, v_min=-0.001, v_max=0.001,c_map="PuOr",pic_size= 480,style="Beam",unit=100,nom_locator=5):
         """
         Plots a square cut of the spectrum as defined by freq_range and scan_range.
 
@@ -547,7 +547,9 @@ class Spectrum:
         else:
         
             if clipping:
-                S21dd=np.clip(self.S21dd,v_min,v_max)
+                clip_min=clip_range[0]
+                clip_max=clip_range[1]
+                S21dd=np.clip(self.S21dd,clip_min,clip_max)
                 im = ax.pcolor(self.Field[scan_min:scan_max, f_min:f_max], self.Freq[f_min:f_max, scan_min:scan_max].T, S21dd[scan_min:scan_max, f_min:f_max],
                     vmin=v_min, vmax=v_max, cmap=c_map,shading='auto')
             else:
@@ -1344,4 +1346,146 @@ class Linecut:
             
             print(out0.fit_report(show_correl=True))
         report=out0
-        return our_fit, fit_params,report
+        return our_fit, fit_params,report 
+    
+    
+    
+  
+    
+class CPW:
+    
+    
+    def __init__(self, current, signal_line, gap, ground, thickness) -> None:
+        
+        self.I=current
+        self.signal_line=signal_line
+        self.gap=gap
+        self.ground=ground
+        self.thickness=thickness
+        
+        
+    
+    def get_Bdistribution(self, distance=210e-9,number_of_points=100000,style="Beam",**kw):
+        
+        plt.style.use(style)
+        gold = (255/255, 215/255, 0/255, 100/100)
+        z0 = distance
+        x0 = np.linspace(-(self.signal_line+self.gap+self.ground),self.signal_line+self.gap+self.ground,number_of_points)
+
+
+        B_ip_CPW = B_BS_analytic(x0,z0,self.thickness,self.signal_line,I=self.I) - B_BS_analytic(x0-(self.signal_line/2+self.gap+self.ground/2),z0,self.thickness,self.ground,I=self.I/2) - B_BS_analytic(x0+(self.signal_line/2+self.gap+self.ground/2),z0,self.thickness,self.ground,I=self.I/2)
+
+        B_oop_CPW = B_BS_analytic(x0,z0,self.thickness,self.signal_line,I=self.I,direction='oop') - B_BS_analytic(x0-(self.signal_line/2+self.gap+self.ground/2),z0,self.thickness,self.ground,I=self.I/2,direction='oop') - B_BS_analytic(x0+(self.signal_line/2+self.gap+self.ground/2),z0,self.thickness,self.ground,I=self.I/2,direction='oop')
+        
+        plt_rng=int((self.signal_line+self.gap+self.ground)*1e6)
+        rec_dim=number_of_points/plt_rng
+        off_dim=self.signal_line/4*1e6*rec_dim
+        ground_dim=self.ground/2*1e6*rec_dim
+        gap_dim=self.gap/2*1e6*rec_dim
+        signal_dim=self.signal_line/2*1e6*rec_dim
+
+        fig,ax = plt.subplots()
+        ax.plot(B_ip_CPW,label=r"$h_\zeta$",**kw)
+        ax.plot(B_oop_CPW,label=r"$h_\xi$",**kw)
+        ax.set_xticks([0,number_of_points/4,number_of_points/2,3*number_of_points/4,number_of_points],[-plt_rng,-plt_rng/2,0,plt_rng/2,plt_rng])
+
+        patch = patches.Rectangle((off_dim,-0.005),ground_dim, 0.01,linewidth = 1,facecolor = gold,edgecolor='black')
+        ax.add_patch(patch)
+        patch = patches.Rectangle((off_dim+ground_dim+gap_dim,-0.005),signal_dim, 0.01,linewidth = 1,facecolor = gold,edgecolor='black')
+        ax.add_patch(patch)
+        patch = patches.Rectangle((off_dim+2*gap_dim+signal_dim+ground_dim,-0.005),ground_dim, 0.01,linewidth = 1,facecolor = gold,edgecolor='black')
+        ax.add_patch(patch)
+        ax.set_xlabel(r"$d\,(\mathit{\mu} m)$")
+        ax.set_ylabel(r"$\mathit{\mu}_0h\,\, (mT)$")
+        plt.legend()
+        
+    def get_Bspectrum(self, distance_range=[-1e-6,1e-6],number_points_XY=[1000,50],show_CPW=True,style="Beam",plot="quiver",**kw):
+        
+        Z0=np.linspace(distance_range[0],distance_range[1],number_points_XY[1])
+        x0 = np.linspace(-(self.signal_line+self.gap+self.ground),self.signal_line+self.gap+self.ground,number_points_XY[0])
+        B_ip_CPW_map=[]
+        B_oop_CPW_map=[]
+        for z0 in Z0:
+            B_ip_CPW = B_BS_analytic(x0,z0,self.thickness,self.signal_line,I=self.I) - B_BS_analytic(x0-(self.signal_line/2+self.gap+self.ground/2),z0,self.thickness,self.ground,I=self.I/2) - B_BS_analytic(x0+(self.signal_line/2+self.gap+self.ground/2),z0,self.thickness,self.ground,I=self.I/2)
+            B_ip_CPW_map.append(B_ip_CPW)
+            
+            B_oop_CPW = B_BS_analytic(x0,z0,self.thickness,self.signal_line,I=self.I,direction='oop') - B_BS_analytic(x0-(self.signal_line/2+self.gap+self.ground/2),z0,self.thickness,self.ground,I=self.I/2,direction='oop') - B_BS_analytic(x0+(self.signal_line/2+self.gap+self.ground/2),z0,self.thickness,self.ground,I=self.I/2,direction='oop')
+            B_oop_CPW_map.append(B_oop_CPW)
+            
+            plt_rng=int((self.signal_line+self.gap+self.ground)*1e6)
+            rec_dim=number_points_XY[0]/plt_rng
+            off_dim=self.signal_line/4*1e6*rec_dim
+            ground_dim=self.ground/2*1e6*rec_dim
+            gap_dim=self.gap/2*1e6*rec_dim
+            signal_dim=self.signal_line/2*1e6*rec_dim
+            
+            
+        plt.style.use(style)
+        gold = (255/255, 215/255, 0/255, 100/100)
+        fig,ax = plt.subplots()
+
+        # Create a grid of coordinates for the vector field plot
+        B_ip_CPW_map = np.array(B_ip_CPW_map)
+        B_oop_CPW_map = np.array(B_oop_CPW_map)
+        x = np.arange(B_ip_CPW_map.shape[1])
+        y = np.arange(B_ip_CPW_map.shape[0])
+        X, Y = np.meshgrid(x, y)
+
+        # Extract the components
+        U = B_ip_CPW_map[:,:]  # x-direction components
+        V = B_oop_CPW_map[:,:]   # z-direction components
+        M = np.hypot(U, V)
+        
+        ##############################################
+        if plot=="quiver":
+            # Plot the vector field
+            ax.quiver(X, Y, U, V,M,units='xy', pivot='mid',scale_units="xy",**kw)
+        if plot=="streamplot":
+            # Plot the vector field
+            ax.streamplot(X, Y, U, V,**kw)
+        if plot=="contour":
+            ax.contour(X,Y,M,**kw)
+        if plot=="contourf":
+            ax.contourf(X,Y,M,**kw)
+        
+        ax.set_xticks([0,number_points_XY[0]/4,number_points_XY[0]/2,3*number_points_XY[0]/4,number_points_XY[0]],[-plt_rng,-plt_rng/2,0,plt_rng/2,plt_rng])
+        
+        ax.set_yticks([0,number_points_XY[1]/4,number_points_XY[1]/2,3*number_points_XY[1]/4,number_points_XY[1]],[distance_range[0]*1e6,distance_range[0]*1e6/2,0,distance_range[1]*1e6/2,distance_range[1]*1e6])
+            
+        if show_CPW:
+            patch = patches.Rectangle((off_dim,number_points_XY[1]/2-0.5),ground_dim, 1,linewidth = 1,facecolor = gold,edgecolor='black')
+            ax.add_patch(patch)
+            patch = patches.Rectangle((off_dim+ground_dim+gap_dim,number_points_XY[1]/2-0.5),signal_dim, 1,linewidth = 1,facecolor = gold,edgecolor='black')
+            ax.add_patch(patch)
+            patch = patches.Rectangle((off_dim+2*gap_dim+signal_dim+ground_dim,number_points_XY[1]/2-0.5),ground_dim, 1,linewidth = 1,facecolor = gold,edgecolor='black')
+            ax.add_patch(patch)
+        
+        ax.set_xlabel(r"$dx\,(\mu m)$")
+        ax.set_ylabel(r"$dy\,(\mu m)$")
+
+    def get_Kspectrum(self,number_of_points=1000,distance=210e-9,IP_excitation=True,OP_excitation=True,style="Beam",K_range=[0,5],**kw):
+        
+        plt.style.use(style)
+        z0=distance
+        x0 = np.linspace(-(self.signal_line+self.gap+self.ground),self.signal_line+self.gap+self.ground,number_of_points)
+        zero_pad=6*len(x0)
+        dx = (x0[2]-x0[1])*1e6
+        B_ip_CPW = B_BS_analytic(x0,z0,self.thickness,self.signal_line,I=self.I) - B_BS_analytic(x0-(self.signal_line/2+self.gap+self.ground/2),z0,self.thickness,self.ground,I=self.I/2) - B_BS_analytic(x0+(self.signal_line/2+self.gap+self.ground/2),z0,self.thickness,self.ground,I=self.I/2)
+
+        B_oop_CPW = B_BS_analytic(x0,z0,self.thickness,self.signal_line,I=self.I,direction='oop') - B_BS_analytic(x0-(self.signal_line/2+self.gap+self.ground/2),z0,self.thickness,self.ground,I=self.I/2,direction='oop') - B_BS_analytic(x0+(self.signal_line/2+self.gap+self.ground/2),z0,self.thickness,self.ground,I=self.I/2,direction='oop')
+        
+        fig, ax =plt.subplots()
+        if IP_excitation==True:
+            spectrum_CPW, k_ip_CPW, dk_ip_CPW = FFT_1D(B_ip_CPW,dx,zero_pad=zero_pad)
+            ax.plot(k_ip_CPW*1e-6,np.abs(spectrum_CPW),label=r'{0:.0f}$\mu$m-{1:.0f}$\mu$m-{2:.0f}$\mu$m'.format(self.signal_line*1e6,self.gap*1e6,self.ground*1e6),**kw)
+            ax.set_xlabel(r'$k_\mathrm{\zeta}$ ($\mu$m$^{-1}$)')
+            ax.set_ylabel(r'$|\mathrm{FFT}(\mu_0 h_\mathrm{\zeta})|$ (arb.u.)')
+            ax.set_xlim(K_range[0],K_range[1])
+            plt.legend()
+        if OP_excitation==True:
+            spectrum_CPW, k_op_CPW, dk_ip_CPW = FFT_1D(B_oop_CPW,dx,zero_pad=zero_pad)
+            ax.plot(k_op_CPW*1e-6,np.abs(spectrum_CPW),label=r'{0:.0f}$\mu$m-{1:.0f}$\mu$m-{2:.0f}$\mu$m'.format(self.signal_line*1e6,self.gap*1e6,self.ground*1e6),**kw)            
+            ax.set_xlabel(r'$k_\mathrm{\xi}$ ($\mu$m$^{-1}$)')
+            ax.set_ylabel(r'$|\mathrm{FFT}(\mu_0 h_\mathrm{\xi})|$ (arb.u.)')
+            ax.set_xlim(K_range[0],K_range[1])
+            plt.legend()
