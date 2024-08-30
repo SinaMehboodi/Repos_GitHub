@@ -1,5 +1,6 @@
 import numpy as np
 import matplotlib.pyplot as plt
+from matplotlib import patches
 from pandas import DataFrame, to_numeric, read_csv
 from scipy.fft import fft, fft2, fftfreq, ifft, ifft2 
 from matplotlib import ticker
@@ -473,7 +474,7 @@ class Spectrum:
             plt.savefig(save_name, bbox_inches='tight')
 
     @timeit
-    def plot(self, save_name=None, denoise = False, v_min=-0.001, v_max=0.001,c_map="bone",pic_size=480,style="Beam",nom_locator=20):
+    def plot(self, save_name=None, denoise = False,Fnoise=10, v_min=-0.001, v_max=0.001,c_map="bone",pic_size=480,style="Beam",nom_locator=20):
         """
         Creates a figure of the FMR spectrum.
 
@@ -498,7 +499,7 @@ class Spectrum:
         
         if denoise:
             
-            S21dd = np.real(self.denoise_spectrum())
+            S21dd = np.real(self.denoise_spectrum(fnoise=Fnoise))
             Freq = self.Freq[:-1, :]
             Field = self.Field[:, :-1]
             
@@ -545,7 +546,7 @@ class Spectrum:
             plt.savefig(save_name, bbox_inches='tight',dpi=900)
 
     @timeit
-    def zoom_plot(self, freq_range, scan_range, clip_range=[-10,10], clipping=False,save_name=None, denoise = False, v_min=-0.001, v_max=0.001,c_map="PuOr",pic_size= 480,style="Beam",unit=100,nom_locator=5):
+    def zoom_plot(self, freq_range, scan_range, clip_range=[-10,10], clipping=False,save_name=None, denoise = False, Fnoise=10, v_min=-0.001, v_max=0.001,c_map="PuOr",pic_size= 480,style="Beam",unit=100,nom_locator=5):
         """
         Plots a square cut of the spectrum as defined by freq_range and scan_range.
 
@@ -581,7 +582,7 @@ class Spectrum:
         
         if denoise:
             
-            S21dd = np.real(self.denoise_spectrum())
+            S21dd = np.real(self.denoise_spectrum(fnoise=Fnoise))
             Freq = self.Freq[:-1, :]
             Field = self.Field[:, :-1]
             
