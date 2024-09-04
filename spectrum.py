@@ -374,7 +374,8 @@ class Spectrum:
         :param v_max: defines the vmax value in the pcolor plot. Change for possibly better contrast. 
         :pic_size: if set (a,b) the figsize will be in inches as normal plt figure, and if set a single digit "A" (linewidth) the length of figure will be the A (pt) in latex format and the pic_size will be calculated by set_size function 
         :nom_locator: number of locators for x axis.
-        
+        :style: you can define the style of ploting here with the desired mpl.style file which is defined by user or the defaults.
+        :f/s_lim: are the limitation for frequency and field scan lines to look at the part whrere user intrested in!
         :return: a plot and a savefile
         """ 
 
@@ -851,13 +852,13 @@ class Spectrum:
     
     def zoom_cycle_plot(self,cycle_range,freq_range, scan_range, save_name=None,cycling=False ,denoise = False, v_min=-0.001, v_max=0.001,c_map="PuOr",pic_size= 480,style="Beam",unit=100,nom_locator=5,colorbar_cord=[1.01, 0.135, 0.02, 0.6]):
         """
-        Plots a square cut of the spectrum as defined by freq_range and scan_range.
+        Plots a cut of the spectrum as defined by freq_range and scan_range + removing the part of spectrum including cycling linecuts! 
 
         :param freq_range: defines the frequency range in which the square cut of the spectrum is to be taken.
         :param scan_range: defines the scan range (column number) in which the square cut of the spectrum is to be taken.
         :param v_min: defines the vmin value in the pcolor plot. Change for possibly better contrast.
         :param v_max: defines the vmax value in the pcolor plot. Change for possibly better contrast.
-
+        :colorbar_cord[a,b,c,d]: due to the change of final pic size you maight need to change the colorbar size and location.
         :return: a plot of the zoomed in segment of the spectrum
         """
         cycle_range_min=cycle_range[0]
