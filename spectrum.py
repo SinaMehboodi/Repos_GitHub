@@ -1535,3 +1535,42 @@ class CPW:
             ax.set_ylabel(r'$|\mathrm{FFT}(\mu_0 h_\mathrm{\xi})|$ (arb.u.)')
             ax.set_xlim(K_range[0],K_range[1])
             plt.legend()
+
+
+
+
+
+
+class FFT_imag:
+
+
+    def __init__(self,real_imag) -> None:
+
+        self.real_imag = real_imag
+
+
+    def fft_imag(self):
+
+        # Step 5: Compute the FFT of the image
+        image_fft = np.fft.fft2(self.real_imag)
+        image_fft_shifted = np.fft.fftshift(image_fft)
+        # Use the magnitude of the FFT for visualization
+        plt.figure()
+        plt.imshow(np.abs(image_fft_shifted), cmap='jet')
+        plt.colorbar()
+        plt.title('Magnitude of FFT of the Image')
+        plt.show()
+
+        # Step 6: Apply the inverse FFT to the transformed image
+        image_ifft = np.fft.ifft2(image_fft)
+
+        # Since the result of the IFFT might have small imaginary parts due to numerical errors, take the real part
+        image_ifft = np.real(image_ifft)
+
+        # Display the resulting image after IFFT
+        plt.figure()
+        plt.imshow(image_ifft, cmap='jet')
+        plt.colorbar()
+        plt.title('Image after Inverse FFT')
+        plt.show()
+                
